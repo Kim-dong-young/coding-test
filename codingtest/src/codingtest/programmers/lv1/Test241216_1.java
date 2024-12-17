@@ -9,11 +9,11 @@ public class Test241216_1 {
 	public static void main(String[] args) {		
 		String answer = "";
 		
-		String video_len = "07:22";
-		String pos = "04:05";
+		String video_len = "10:55";
+		String pos = "00:05";
 		String op_start = "00:15";
-		String op_end = "04:07";
-		String[] commands = {"next"};
+		String op_end = "06:55";
+		String[] commands = {"prev", "next", "next"};
 		
 		Time videoTime = new Time(video_len);
 		Time opStartTime = new Time(op_start);
@@ -63,7 +63,10 @@ class Time{
 	}
 
 	public void setMin(int min) {
-		this.min = min;
+		if(min > 0)
+			this.min = min;	
+		else
+			this.min = 0;
 	}
 
 	public int getSec() {
@@ -71,7 +74,19 @@ class Time{
 	}
 
 	public void setSec(int sec) {
-		this.sec = sec;
+		if(sec > 0)
+			this.sec = sec;	
+		else
+			this.sec = 0;
+	}
+	
+	public void addSecond(int sec) {
+		this.setMin((this.toSecond() + sec) / 60);
+		this.setSec((this.toSecond() + sec) % 60);
+	}
+	
+	public int toSecond() {
+		return this.min * 60 + this.sec;
 	}
 
 	@Override
@@ -80,7 +95,7 @@ class Time{
 	}
 }
 
-class VideoPlayer extends Time {
+class VideoPlayer {
 	private int moveTime = 10;
 	
 	private Time videoTime;
@@ -97,57 +112,35 @@ class VideoPlayer extends Time {
 	
 	public void checkTime() {
 		// 현재 시점이 오프닝 시작 시간 후 인지 확인
-		if(posTime.getMin() >= opStartTime.getMin() &&
-		   posTime.getSec() >= opStartTime.getSec() ) {
-			
+		if(posTime.toSecond() >= opStartTime.toSecond()) {
 			// 현재 시점이 오프닝 끝 시간 전 인지 확인
-			if(posTime.getMin() <= opEndTime.getMin() &&
-			   posTime.getSec() <= opEndTime.getSec()) {
-				
+			if(posTime.toSecond() <= opEndTime.toSecond()) {
 				// 오프닝 시작시간과 끝 시간 사이일 경우, 오프닝 스킵
 				// => 현재 시간을 오프닝 끝 시간으로 변경
 				posTime.setMin(opEndTime.getMin());
 				posTime.setSec(opEndTime.getSec());
-				
 			}
 		}
 		
 		// 현재 시간이 비디오 시간을 초과했는지 확인
-		if(posTime.getMin() >= videoTime.getMin() &&
-		   posTime.getSec() >= videoTime.getSec()) {
+		if(posTime.toSecond() >= videoTime.toSecond()) {
 			posTime.setMin(videoTime.getMin());
 			posTime.setSec(videoTime.getSec());
-		}
-		
-		// 현재 시간이 비디오 시간 미만인지 확인
-		if(posTime.getMin() < 0) {
-			posTime.setMin(0);
-			posTime.setSec(0);
 		}
 	}
 	
 	public void next() {
-		if(posTime.getSec() + moveTime <= 60) {
-			posTime.setSec(posTime.getSec() + moveTime);
-		} else {
-			posTime.setMin(posTime.getMin() + 1);
-			posTime.setSec(posTime.getSec() % moveTime);
-		}
+		posTime.addSecond(moveTime);
 		checkTime();
 	}
 	
 	public void prev() {
-		if(posTime.getSec() - moveTime >= 0) {
-			posTime.setSec(posTime.getSec() - moveTime);
-		} else {
-			posTime.setMin(posTime.getMin() - 1);
-			posTime.setSec(60 - moveTime + posTime.getSec());
-		}
+		posTime.addSecond(-moveTime);
 		checkTime();
 	}
 
 	@Override
 	public String toString() {
-		return posTime.getMin() + ":" + posTime.getSec();
+		return String.format("%02d:%02d", posTime.getMin(), posTime.getSec());
 	}
 }
