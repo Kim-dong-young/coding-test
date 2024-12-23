@@ -2,7 +2,7 @@ package codingtest.programmers.lv1;
 
 // [PCCE 기출문제] 9번 / 이웃한 칸
 // https://school.programmers.co.kr/learn/courses/30/lessons/250125
-public class Test20241222_1 {
+public class Test241222_1 {
 	public static void main(String[] args) {
 		String[][] board = {
 				{"blue", "red", "orange", "red"}, 
