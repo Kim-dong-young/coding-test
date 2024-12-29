@@ -4,15 +4,28 @@ package codingtest.programmers.lv2;
 // https://school.programmers.co.kr/learn/courses/30/lessons/340211
 public class Test241227_1 {
 	public static void main(String[] args) {
-		
-		int[][] points = {{3,2},{6,4},{4,7},{1,4}};
-		int[][] routes = {{4,2},{1,3},{2,4}};
+		/*
+			{{3,2},{6,4},{4,7},{1,4}}
+			{{4,2},{1,3},{2,4}}
+			
+			{{3, 2}, {6, 4}, {4, 7}, {1, 4}} 
+			{{4, 2}, {1, 3}, {4, 2}, {4, 3}} 
+
+			{{2, 2}, {2, 3}, {2, 7}, {6, 6}, {5, 2}} 
+			{{2, 3, 4, 5}, {1, 3, 4, 5}}
+			
+			{{1, 1}, {2, 2}, {3, 3}}
+			{{1, 2, 1}, {3, 2, 1}}
+		 */
+		int[][] points = {{1, 1}, {2, 2}, {3, 3}};
+		int[][] routes = {{1, 2, 1}, {3, 2, 1}};
 		
 		int result = 0;
 		
 		Robot[] robots = new Robot[routes.length];
 		
 		// => 이동하는 로봇 객체 만들어보자
+		// 로봇에게 목적지 좌표 입력 ( routes 에 있는 points 번호를 좌표로 변환 )
 		for(int i=0; i < routes.length; i++) {
 			int[][] destinations = new int[routes[0].length][2];
 			
@@ -32,16 +45,24 @@ public class Test241227_1 {
 				System.out.println(robot);
 			}
 			
-			boolean[][] isChecked = new boolean[robots.length][robots.length];
+			// 충돌 검사
+			boolean[] isChecked = new boolean[robots.length];
 			for(int i=0; i < robots.length; i++) {
 				for(int j=0; j < robots.length; j++) {
 					
 					if(i == j) continue;
 					
 					if(robots[i].equals(robots[j]) && 
-						!(isChecked[i][j] || isChecked[j][i])) {
-						isChecked[i][j] = true;
-						result++;
+						!(isChecked[i] || isChecked[j])) {
+						
+						if(!isChecked[i] && !isChecked[j]) {
+							System.out.println( (i+1) + "번 로봇과 " + (j+1) + "번 로봇 충돌 발생");
+							result++;
+						}
+						
+						isChecked[i] = true;
+						isChecked[j] = true;
+					
 					}
 				}
 			}
@@ -98,11 +119,11 @@ class Robot{
 		// 항상 최단 경로로 이동, y 좌표 우선 이동 후, x 좌표 이동
 		if(x != destinations[dIndex][0]) {
 			if(x < destinations[dIndex][0]) x++;
-			if(x > destinations[dIndex][0]) x--;
+			else if(x > destinations[dIndex][0]) x--;
 		}
 		else if(y != destinations[dIndex][1]) {
 			if(y < destinations[dIndex][1]) y++;
-			if(y > destinations[dIndex][1]) y--;
+			else if(y > destinations[dIndex][1]) y--;
 		}
 		
 		if(x == destinations[dIndex][0] && y == destinations[dIndex][1]) {
