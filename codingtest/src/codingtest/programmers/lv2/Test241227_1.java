@@ -17,8 +17,8 @@ public class Test241227_1 {
 			{{1, 1}, {2, 2}, {3, 3}}
 			{{1, 2, 1}, {3, 2, 1}}
 		 */
-		int[][] points = {{1, 1}, {2, 2}, {3, 3}};
-		int[][] routes = {{1, 2, 1}, {3, 2, 1}};
+		int[][] points = {{3, 2}, {6, 4}, {4, 7}, {1, 4}} ;
+		int[][] routes = {{4, 2}, {1, 3}, {4, 2}, {4, 3}} ;
 		
 		int result = 0;
 		
@@ -50,16 +50,20 @@ public class Test241227_1 {
 			for(int i=0; i < robots.length; i++) {
 				for(int j=0; j < robots.length; j++) {
 					
-					if(i == j) continue;
+					if(i == j) continue; // 본인과 본인 충돌은 확인하지 않음
+					if(robots[i].getX() < 0 || robots[j].getX() < 0) continue; // 로봇이 탐색을 마친 경우
 					
+					// 두 로봇의 좌표가 같은가 ? && 둘중 하나라도 충돌난 적이 없는가 ?
 					if(robots[i].equals(robots[j]) && 
-						!(isChecked[i] || isChecked[j])) {
+						(!isChecked[i] || !isChecked[j])) {
 						
+						// 둘다 충돌난 적이 없다면 횟수 증가 ( 한쪽이라도 충돌이 났다면 중복임 )
 						if(!isChecked[i] && !isChecked[j]) {
 							System.out.println( (i+1) + "번 로봇과 " + (j+1) + "번 로봇 충돌 발생");
 							result++;
 						}
 						
+						// 충돌 표시
 						isChecked[i] = true;
 						isChecked[j] = true;
 					
@@ -110,9 +114,14 @@ class Robot{
 	}
 	
 	public void move() {
-		if(dIndex >= destinations.length) {
+		if(dIndex > destinations.length) {
+			return;
+		}
+		
+		if(dIndex == destinations.length) {
 			x = -1;
 			y = -1;
+			dIndex++;
 			return;
 		}
 		
@@ -132,7 +141,15 @@ class Robot{
 	}
 	
 	public boolean isEnd() {
-		return dIndex >= destinations.length;
+		return dIndex > destinations.length;
+	}
+	
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 
 	@Override
