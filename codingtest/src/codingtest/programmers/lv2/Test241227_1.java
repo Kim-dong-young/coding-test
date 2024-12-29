@@ -10,13 +10,13 @@ public class Test241227_1 {
 			
 			{{3, 2}, {6, 4}, {4, 7}, {1, 4}} 
 			{{4, 2}, {1, 3}, {4, 2}, {4, 3}} 
-
+	
 			{{2, 2}, {2, 3}, {2, 7}, {6, 6}, {5, 2}} 
 			{{2, 3, 4, 5}, {1, 3, 4, 5}}
 			
 			{{1, 1}, {2, 2}, {3, 3}}
 			{{1, 2, 1}, {3, 2, 1}}
-		 */
+		*/
 		int[][] points = {{3, 2}, {6, 4}, {4, 7}, {1, 4}} ;
 		int[][] routes = {{4, 2}, {1, 3}, {4, 2}, {4, 3}} ;
 		
@@ -36,16 +36,16 @@ public class Test241227_1 {
 			robots[i] = new Robot(destinations);
 		}
 		
-		int index = 1;
+//		int index = 1;
 		while(true) {
-			System.out.println("============"+ index +"번째 =============");
-			index ++;
+//			System.out.println("============"+ index +"번째 =============");
+//			index ++;
+//			
+//			for(Robot robot : robots) {
+//				System.out.println(robot);
+//			}
 			
-			for(Robot robot : robots) {
-				System.out.println(robot);
-			}
-			
-			// 충돌 검사
+			// 충돌 검사 ( 마지막으로 로봇이 보드를 벗어나기 전에도 검사해줘야 하므로, 우선적으로 검사한다. )
 			boolean[] isChecked = new boolean[robots.length];
 			for(int i=0; i < robots.length; i++) {
 				for(int j=0; j < robots.length; j++) {
@@ -59,7 +59,7 @@ public class Test241227_1 {
 						
 						// 둘다 충돌난 적이 없다면 횟수 증가 ( 한쪽이라도 충돌이 났다면 중복임 )
 						if(!isChecked[i] && !isChecked[j]) {
-							System.out.println( (i+1) + "번 로봇과 " + (j+1) + "번 로봇 충돌 발생");
+//							System.out.println( (i+1) + "번 로봇과 " + (j+1) + "번 로봇 충돌 발생");
 							result++;
 						}
 						
@@ -71,19 +71,19 @@ public class Test241227_1 {
 				}
 			}
 			
-			System.out.println("\nResult : " + result + "\n");
+//			System.out.println("\nResult : " + result + "\n");
 			
 			for(Robot robot : robots) {
 				robot.move();
 			}
 			
-			System.out.println("\n움직인 후 로봇\n");
-			
-			for(Robot robot : robots) {
-				System.out.println(robot);
-			}
-			
-			System.out.println("==========================");
+//			System.out.println("\n움직인 후 로봇\n");
+//			
+//			for(Robot robot : robots) {
+//				System.out.println(robot);
+//			}
+//			
+//			System.out.println("==========================");
 			
 			boolean isAllFinish = true;
 			for(Robot robot : robots) {
@@ -101,10 +101,10 @@ public class Test241227_1 {
 }
 
 class Robot{
-	private int x;
-	private int y;
-	private int[][] destinations;
-	private int dIndex;
+	private int x; // 로봇의 현재 x 좌표 ( 그림 상 세로(y) )
+	private int y; // 로봇의 현재 y 좌표 ( 그림 상 가로(x) )
+	private int[][] destinations; // destinations[N] 번쨰 목표지의 N[0] = x좌표 / N[1] = y좌표
+	private int dIndex; // 현재 로봇이 몇번째 목적지로 이동하고 있는지
 	
 	public Robot(int[][] destinations) {
 		this.x = destinations[0][0];
@@ -114,10 +114,12 @@ class Robot{
 	}
 	
 	public void move() {
+		// 보드를 벗어난 상태
 		if(dIndex > destinations.length) {
 			return;
 		}
 		
+		// 마지막 목적지에 도착하고, 아직 보드를 벗어나지 않은 상태
 		if(dIndex == destinations.length) {
 			x = -1;
 			y = -1;
@@ -135,12 +137,14 @@ class Robot{
 			else if(y > destinations[dIndex][1]) y--;
 		}
 		
+		// 목적지에 도달했을 경우, dIndex 값을 destinations.length로 만들어 마지막 목적지에 도착한 상태임을 표시
 		if(x == destinations[dIndex][0] && y == destinations[dIndex][1]) {
 			dIndex++;
 		}
 	}
 	
 	public boolean isEnd() {
+		// 보드를 벗어난 상태
 		return dIndex > destinations.length;
 	}
 	
@@ -161,6 +165,7 @@ class Robot{
 		return "Robot [x=" + x + ", y=" + y + ", dIndex="+ dIndex +" , destination=" + dstToString + "]";
 	}
 
+	// 좌표가 같은지 확인
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Robot) {
