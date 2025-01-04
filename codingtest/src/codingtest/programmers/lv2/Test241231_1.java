@@ -12,47 +12,65 @@ public class Test241231_1 {
 			{1, 1, 1, 0, 0, 0, 1, 1}
 		};
 		
+		int[] expectOil = new int[land.length];
+		boolean[][] isVisited = new boolean[land.length][land[0].length];
+		
 		// 시추 포인트
 		for(int sichu=0; sichu < land[0].length; sichu++) {
 			// 밑으로 시추
 			for(int depth=0; depth < land.length; depth++) {
-				if(land[depth][sichu] == 0) continue; // 그냥 땅일경우 지나침
+				// 그냥 땅이거나, 이미 측정한 땅이면 지나침
+				if(land[depth][sichu] == 0 || isVisited[depth][sichu]) continue;
 				
 				// 1. 석유일 경우 석유의 개수 세기
-				
-				// 2. 이미 센 석유 덩어리인지 확인하기
+				expectOil[sichu] += countOil(land, isVisited, depth, sichu);
 			}
+		}
+		
+		for(int oilCnt : expectOil) {
+			System.out.println(oilCnt);
 		}
 	}
 	
-	public static int countOil(int[][] land, int x, int y) {
-		int result = 0;
+	public static int countOil(int[][] land, boolean[][]isVisited, int x, int y) {		
+		int oilCnt = 1; // 기본적으로 기름이 있는곳 부터 탐색 시작 = 1개는 최소한 보장되어있다.
 		CoordStack cStack = new CoordStack();
 		
 		while(true) {
 			// 남쪽 탐색
-			if(land[x+1][y] != 0)
+			if(x+1 < land.length && land[x+1][y] != 0 && !isVisited[x+1][y]) {
 				cStack.push(x,y);
+				isVisited[x+1][y]= true;
+			}
 			// 동쪽 탐색
-			if(land[x][y+1] != 0)
+			if(y+1 < land[x].length && land[x][y+1] != 0 && !isVisited[x][y+1]) {
 				cStack.push(x,y);
+				isVisited[x][y+1] = true;
+			}
 			// 북쪽 탐색
-			if(land[x-1][y] != 0)
+			if(x-1 > 0 && land[x-1][y] != 0 && !isVisited[x-1][y]) {
 				cStack.push(x,y);
+				isVisited[x-1][y] = true;
+			}
 			// 서쪽 탐색
-			if(land[x][y-1] != 0)
+			if(y-1 > 0 && land[x][y-1] != 0 && !isVisited[x][y-1]) {
 				cStack.push(x,y);
+				isVisited[x][y-1] = true;
+			}
 			
-			// TODO 스택에 탐색할 좌표 저장 후, 더이상 탐색할 곳이 없을떄까지 반복할 것
-			cStack.pop();
-			result++;
+			int[] nextCoord = cStack.pop();
+			if(nextCoord != null) {
+				x = nextCoord[0];
+				y = nextCoord[1];
+				oilCnt++;
+			}
 			
 			if(cStack.isEmpty())
 				break;
 		}
 		
 		
-		return result;
+		return oilCnt;
 	}
 }
 
